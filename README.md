@@ -1,0 +1,2 @@
+# Omnivers
+Idle game
