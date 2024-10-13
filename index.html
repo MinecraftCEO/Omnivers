@@ -33,14 +33,16 @@
         const generationRates = [0, 1, 10, 100, 1000, 10000, 100000, 1000000];
 
         function formatResources(num) {
-            if (num < 1000000) return num.toString();
+            if (num < 1000000) return num.toString(); // Normale Anzeige
             const units = generateUnits();
-            let i = 0;
-            while (num >= 1000000 && i < units.length) {
-                num /= 1000000;
-                i++;
+            let unitIndex = 0;
+
+            while (num >= 1000000 && unitIndex < units.length) {
+                num /= 1000; // Wir teilen durch 1000 für jede Einheit
+                unitIndex++;
             }
-            return `${num.toFixed(2)}${units[i - 1]}`;
+
+            return `${num.toFixed(2)}${units[unitIndex - 1]}`;
         }
 
         function generateUnits() {
@@ -64,8 +66,7 @@
                     }
                 }
             }
-            // Und so weiter bis zu sieben Buchstaben...
-            // Du kannst den Code hier erweitern, wenn du mehr als 3 Buchstaben benötigst
+            // Fügen Sie hier weitere Buchstaben für 4 bis 7 hinzu, wenn nötig
             return units;
         }
 
