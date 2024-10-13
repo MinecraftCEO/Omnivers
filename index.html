@@ -8,41 +8,94 @@
         body { font-family: Arial, sans-serif; text-align: center; background-color: #1a1a1a; color: white; }
         button { padding: 10px 20px; font-size: 16px; margin: 10px; }
         #info { margin-top: 20px; }
+        #testInput { margin-top: 20px; }
+        #resources { position: absolute; top: 10px; right: 10px; }
+        #testLabel { position: absolute; top: 10px; left: 10px; }
     </style>
 </head>
 <body>
     <h1>Omniverse Idle Game</h1>
     <h2>Typ: <span id="type">K0</span></h2>
-    <h2>Resources: <span id="resources">0</span></h2>
+    <div id="resources">Resources: 0</div>
+    <div id="testLabel">Testzahl hier eintragen:</div>
+    <input type="number" id="testInput" placeholder="Testzahl hier eintragen" />
+    <button id="cheatButton">Energie hinzufügen</button>
     <button id="clickButton">Generate Energy</button>
     <div id="info">
         <p>Press the button to generate energy and level up!</p>
     </div>
+
     <script>
         let resources = 0;
         let typeLevel = 0;
         const typeNames = ["K0", "K1", "K2", "K3", "K4", "K5", "K6", "K7"];
         const resourcesToNextLevel = [10, 100, 1000, 10000, 100000, 1000000, 10000000];
         const generationRates = [0, 1, 10, 100, 1000, 10000, 100000, 1000000];
+
+        function formatResources(num) {
+            if (num < 1000000) return num.toString();
+            const units = generateUnits();
+            let i = 0;
+            while (num >= 1000000 && i < units.length) {
+                num /= 1000000;
+                i++;
+            }
+            return `${num.toFixed(2)}${units[i - 1]}`;
+        }
+
+        function generateUnits() {
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            const units = [];
+            // Ein Buchstabe (a-z)
+            for (let i = 0; i < alphabet.length; i++) {
+                units.push(alphabet[i]);
+            }
+            // Zwei Buchstaben (aa-zz)
+            for (let i = 0; i < alphabet.length; i++) {
+                for (let j = 0; j < alphabet.length; j++) {
+                    units.push(alphabet[i] + alphabet[j]);
+                }
+            }
+            // Drei Buchstaben (aaa-zzz)
+            for (let i = 0; i < alphabet.length; i++) {
+                for (let j = 0; j < alphabet.length; j++) {
+                    for (let k = 0; k < alphabet.length; k++) {
+                        units.push(alphabet[i] + alphabet[j] + alphabet[k]);
+                    }
+                }
+            }
+            // Und so weiter bis zu sieben Buchstaben...
+            // Du kannst den Code hier erweitern, wenn du mehr als 3 Buchstaben benötigst
+            return units;
+        }
+
+        function updateResourcesDisplay() {
+            document.getElementById('resources').innerText = `Resources: ${formatResources(resources)}`;
+        }
+
         document.getElementById('clickButton').addEventListener('click', () => {
-            resources++;
-            document.getElementById('resources').innerText = resources;
+            resources += generationRates[typeLevel];
+            updateResourcesDisplay();
             checkLevelUp();
         });
+
+        document.getElementById('cheatButton').addEventListener('click', () => {
+            const cheatValue = parseInt(document.getElementById('testInput').value);
+            if (!isNaN(cheatValue)) {
+                resources += cheatValue;
+                updateResourcesDisplay();
+            }
+        });
+
         function checkLevelUp() {
             if (resources >= resourcesToNextLevel[typeLevel]) {
                 resources -= resourcesToNextLevel[typeLevel];
                 typeLevel++;
                 document.getElementById('type').innerText = typeNames[typeLevel];
-                document.getElementById('resources').innerText = resources;
+                updateResourcesDisplay();
                 alert(`You are now on type ${typeNames[typeLevel]}!`);
             }
         }
-        setInterval(() => {
-            resources += generationRates[typeLevel];
-            document.getElementById('resources').innerText = resources;
-            checkLevelUp();
-        }, 1000);
     </script>
 </body>
 </html>
