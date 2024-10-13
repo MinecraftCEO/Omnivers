@@ -41,6 +41,7 @@
             const units = generateUnits();
             let unitIndex = 0;
 
+            // Berechnung, um die korrekte Einheit zu finden
             while (num >= 1000000 && unitIndex < units.length) {
                 num /= 1000; // Wir teilen durch 1000 für jede Einheit
                 unitIndex++;
@@ -52,6 +53,7 @@
         function generateUnits() {
             const alphabet = 'abcdefghijklmnopqrstuvwxyz';
             const units = [];
+
             // Ein Buchstabe (a-z)
             for (let i = 0; i < alphabet.length; i++) {
                 units.push(alphabet[i]);
@@ -62,20 +64,32 @@
                     units.push(alphabet[i] + alphabet[j]);
                 }
             }
-            // Drei Buchstaben (aaa-zzz)
-            for (let i = 0; i < alphabet.length; i++) {
-                for (let j = 0; j < alphabet.length; j++) {
-                    for (let k = 0; k < alphabet.length; k++) {
-                        units.push(alphabet[i] + alphabet[j] + alphabet[k]);
-                    }
-                }
-            }
-            // Fügen Sie hier weitere Buchstaben für 4 bis 7 hinzu, wenn nötig
+            // Fügen Sie hier weitere Buchstaben für 3 bis 7 hinzu, wenn nötig
+            // Hier kannst du mehr hinzufügen, wenn du mehr als 2 Buchstaben benötigst
+
             return units;
         }
 
+        function convertToResources(num) {
+            let totalResources = BigInt(num);
+            let base = BigInt(1000000); // Basis für die Umrechnung
+
+            // Berechnung, um die korrekte Einheit zu finden
+            let units = generateUnits();
+            let unitIndex = 0;
+
+            // Hier wird die Berechnung für die Buchstaben umgestellt
+            while (totalResources >= base && unitIndex < units.length) {
+                totalResources /= base; // Teilen durch die Basis
+                unitIndex++;
+            }
+
+            return { value: totalResources, unit: units[unitIndex - 1] };
+        }
+
         function updateResourcesDisplay() {
-            document.getElementById('resources').innerText = `Resources: ${formatResources(resources)}`;
+            const { value, unit } = convertToResources(resources);
+            document.getElementById('resources').innerText = `Resources: ${formatNumber(value)}${unit}`;
         }
 
         document.getElementById('clickButton').addEventListener('click', () => {
